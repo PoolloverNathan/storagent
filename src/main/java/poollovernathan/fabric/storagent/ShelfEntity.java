@@ -3,7 +3,9 @@ package poollovernathan.fabric.storagent;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 
@@ -24,5 +26,17 @@ public class ShelfEntity extends BlockEntity implements ImplementedInventory {
     @Override
     public DefaultedList<ItemStack> getItems() {
         return items;
+    }
+
+    @Override
+    public void readNbt(NbtCompound nbt) {
+        super.readNbt(nbt);
+        Inventories.readNbt(nbt, items);
+    }
+
+    @Override
+    public void writeNbt(NbtCompound nbt) {
+        Inventories.writeNbt(nbt, items);
+        super.writeNbt(nbt);
     }
 }

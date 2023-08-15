@@ -9,9 +9,17 @@ import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec2f;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
@@ -111,6 +119,47 @@ public class ShelfBlock extends Block implements BlockEntityProvider {
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
         return new ShelfEntity(pos, state);
+    }
+
+    @Override
+    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+        if (world.isClient) return ActionResult.SUCCESS;
+        if (hit.getSide() != Direction.UP) return ActionResult.PASS;
+        var slotX = (int) Math.floor(Math.abs(hit.getPos().x % 1) * 4);
+        var slotZ = (int) Math.floor(Math.abs(hit.getPos().z % 1) * 4);
+        var slot = slotZ * 4 + slotX;
+        var entity = world.getBlockEntity(pos);
+        if (entity instanceof ShelfEntity shelfEntity) {
+            var stack = shelfEntity.getStack(slot);
+            if (stack.isEmpty()) {
+                shelfEntity.setStack(slot, player.getStackInHand(hand).split(1));
+            } else {
+                player.giveItemStack(stack);
+                shelfEntity.setStack(slot, ItemStack.EMPTY);
+            }
+            return ActionResult.SUCCESS;
+        } else {
+            ExampleMod.LOGGER.error("Shelf at %s %s has no block entity".formatted(world.getRegistryKey().getValue(), pos));
+            return ActionResult.FAIL;
+        }
+    }
+
+    @Override
+    public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+        if (world.getBlockEntity(pos) instanceof ShelfEntity shelf) {
+            for (var x = 0; x < 4; x++) {
+                for (var z = 0; z < 4; z++) {
+                    var slot = z * 4 + x;
+                    var stack = shelf.getStack(slot);
+                    if (!stack.isEmpty()) {
+                        var itemPos = new Vec3d(pos.getX() + ((pos.getX() < 0 ? 3 - x : x) / 4f) + 0.125, pos.getY() + 0.5, pos.getZ() + ((pos.getZ() < 0 ? 3 - z : z) / 4f) + 0.125);
+                        var entity = new ItemEntity(world, itemPos.x, itemPos.y, itemPos.z, stack, 0, 0.1, 0);
+                        world.spawnEntity(entity);
+                        entity.setPos(itemPos.x, itemPos.y, itemPos.z);
+                    }
+                }
+            }
+        }
     }
 
     interface ExposedItemBehavior {
