@@ -43,7 +43,7 @@ public class ShelfBlock extends Block implements BlockEntityProvider {
     }
 
     public String createId() {
-        return "shelf_%s_%s".formatted(surface.name().toLowerCase(), supports.name().toLowerCase());
+        return "%s_shelf/%s_supports".formatted(surface.name().toLowerCase(), supports.name().toLowerCase());
     }
 
     public CraftingRecipeJsonBuilder createRecipe() {
