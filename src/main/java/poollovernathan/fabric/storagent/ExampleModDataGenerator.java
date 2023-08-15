@@ -70,7 +70,7 @@ class ModelGenerator extends FabricModelProvider {
 				final var textures = new JsonObject();
 				textures.addProperty("supports_top", block.supports.supportTexture.toString() + "_top");
 				textures.addProperty("supports_side", block.supports.supportTexture.toString());
-				textures.addProperty("surface", block.supports.surfaceTexture.toString());
+				textures.addProperty("surface", block.surface.surfaceTexture.toString());
 				model.add("textures", textures);
 				return model;
 			});
