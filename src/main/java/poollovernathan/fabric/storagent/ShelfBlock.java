@@ -3,8 +3,10 @@ package poollovernathan.fabric.storagent;
 import com.google.common.collect.ImmutableMap;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
 import net.minecraft.item.ItemStack;
@@ -16,12 +18,13 @@ import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
 
 import static poollovernathan.fabric.storagent.ExampleMod.id;
 
-public class ShelfBlock extends Block {
+public class ShelfBlock extends Block implements BlockEntityProvider {
     public final ShelfMaterial surface;
     public final ShelfMaterial supports;
 
@@ -102,6 +105,12 @@ public class ShelfBlock extends Block {
     @Override
     public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
         // TODO: Once block entity is added, run ExposedItemBehavior::randomTick() on all implementing items
+    }
+
+    @Nullable
+    @Override
+    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new ShelfEntity(pos, state);
     }
 
     interface ExposedItemBehavior {

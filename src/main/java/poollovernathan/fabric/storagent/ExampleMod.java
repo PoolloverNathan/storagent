@@ -4,7 +4,10 @@ import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.*;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Items;
 import net.minecraft.util.Identifier;
@@ -21,6 +24,7 @@ public class ExampleMod implements ModInitializer {
 	public static final String MOD_ID = "storagent";
     public static final Logger LOGGER = LoggerFactory.getLogger("Your Storage Problem");
 	public static final ShelfBlock[] SHELF_BLOCKS = new ShelfBlock[ShelfMaterial.values().length * ShelfMaterial.values().length];
+	public static final BlockEntityType<ShelfEntity> SHELF_BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(ShelfEntity::new).build();
 
 	@Override
 	public void onInitialize() {
@@ -42,6 +46,7 @@ public class ExampleMod implements ModInitializer {
 				Registry.register(Registry.ITEM, id(block.createId()), new BlockItem(block, new FabricItemSettings().group(Items.CHEST.getGroup())));
 			}
 		}
+		Registry.register(Registry.BLOCK_ENTITY_TYPE, id("shelf"), SHELF_BLOCK_ENTITY);
 	}
 
 	public static Object[] reflexiveBlockSettingsDarkMagicDoNotUse(AbstractBlock block, String... keys) {
