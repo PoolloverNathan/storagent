@@ -8,18 +8,14 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
-import net.fabricmc.fabric.api.event.registry.RegistryEntryRemovedCallback;
 import net.minecraft.block.Block;
 import net.minecraft.data.client.*;
 import net.minecraft.data.server.recipe.RecipeJsonProvider;
-import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
-import net.minecraft.util.JsonHelper;
-import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 
 import java.util.function.Consumer;
 
-import static poollovernathan.fabric.storagent.ExampleMod.RACK_BLOCKS;
+import static poollovernathan.fabric.storagent.ExampleMod.SHELF_BLOCKS;
 import static poollovernathan.fabric.storagent.ExampleMod.id;
 
 public class ExampleModDataGenerator implements DataGeneratorEntrypoint {
@@ -40,7 +36,7 @@ class ModelGenerator extends FabricModelProvider {
 
 	@Override
 	public void generateBlockStateModels(BlockStateModelGenerator blockStateModelGenerator) {
-		for (var block: ExampleMod.RACK_BLOCKS) {
+		for (var block: ExampleMod.SHELF_BLOCKS) {
 			var id = Registry.BLOCK.getId(block);
 			id = id(id.getNamespace(), "block/" + id.getPath());
 			var finalId = id;
@@ -70,7 +66,7 @@ class ModelGenerator extends FabricModelProvider {
 			});
 			blockStateModelGenerator.modelCollector.accept(id, () -> {
 				final var model = new JsonObject();
-				model.addProperty("parent", id("block/base_rack").toString());
+				model.addProperty("parent", id("block/base_shelf").toString());
 				final var textures = new JsonObject();
 				textures.addProperty("supports_top", block.supports.supportTexture.toString() + "_top");
 				textures.addProperty("supports_side", block.supports.supportTexture.toString());
@@ -95,7 +91,7 @@ class RecipeGenerator extends FabricRecipeProvider {
 
 	@Override
 	protected void generateRecipes(Consumer<RecipeJsonProvider> exporter) {
-		for (var block: RACK_BLOCKS) {
+		for (var block: SHELF_BLOCKS) {
 			block.createRecipe().offerTo(exporter);
 		}
 	}
@@ -109,7 +105,7 @@ class LootGenerator extends FabricBlockLootTableProvider {
 
 	@Override
 	protected void generateBlockLootTables() {
-		for (var block: RACK_BLOCKS) {
+		for (var block: SHELF_BLOCKS) {
 			addDrop(block, block.asItem());
 		}
 	}
@@ -127,7 +123,7 @@ class LangGenerator extends FabricLanguageProvider {
 
 	@Override
 	public void generateTranslations(TranslationBuilder translationBuilder) {
-		for (var block: RACK_BLOCKS) {
+		for (var block: SHELF_BLOCKS) {
 			translationBuilder.add(block, block.getTrueName());
 		}
 	}

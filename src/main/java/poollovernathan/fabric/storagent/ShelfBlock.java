@@ -1,57 +1,43 @@
 package poollovernathan.fabric.storagent;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
-import net.minecraft.advancement.criterion.Criterion;
-import net.minecraft.advancement.criterion.CriterionConditions;
-import net.minecraft.advancement.criterion.ItemCriterion;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder;
-import net.minecraft.data.server.recipe.RecipeJsonProvider;
 import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.Property;
-import net.minecraft.tag.BlockTags;
-import net.minecraft.tag.TagKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 
 import static poollovernathan.fabric.storagent.ExampleMod.id;
 
-public class RackBlock extends Block {
-    public final RackMaterial surface;
-    public final RackMaterial supports;
+public class ShelfBlock extends Block {
+    public final ShelfMaterial surface;
+    public final ShelfMaterial supports;
 
-    RackBlock(Settings settings, RackMaterial surface, RackMaterial supports) {
+    ShelfBlock(Settings settings, ShelfMaterial surface, ShelfMaterial supports) {
         super(settings);
         this.surface = surface;
         this.supports = supports;
     }
 
     public String createId() {
-        return "rack_%s_%s".formatted(surface.name().toLowerCase(), supports.name().toLowerCase());
+        return "shelf_%s_%s".formatted(surface.name().toLowerCase(), supports.name().toLowerCase());
     }
 
     public CraftingRecipeJsonBuilder createRecipe() {
         return new ShapedRecipeJsonBuilder(asItem(), 1)
-                .group(id("racks").toString())
+                .group(id("shelves").toString())
                 .input('f', surface.slabBlock)
                 .input('p', supports.logBlock)
                 .pattern("ff")
@@ -60,7 +46,7 @@ public class RackBlock extends Block {
     }
 
     public String getTrueName() {
-        return surface.name + " Rack";
+        return surface.name + " Shelf";
     }
 
     protected static VoxelShape getShape() {
@@ -119,7 +105,7 @@ public class RackBlock extends Block {
     }
 
     interface ExposedItemBehavior {
-        void precipitationTick(Biome.Precipitation precipitation);
-        void randomTick();
+        void precipitationTick(ItemStack stack, Biome.Precipitation precipitation);
+        void randomTick(ItemStack stack);
     }
 }

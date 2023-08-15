@@ -2,11 +2,8 @@ package poollovernathan.fabric.storagent;
 
 import net.fabricmc.api.ModInitializer;
 
-import net.fabricmc.fabric.api.block.v1.FabricBlock;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.fabricmc.fabric.mixin.object.builder.AbstractBlockAccessor;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.*;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Items;
@@ -23,7 +20,7 @@ public class ExampleMod implements ModInitializer {
 	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final String MOD_ID = "storagent";
     public static final Logger LOGGER = LoggerFactory.getLogger("Your Storage Problem");
-	public static final RackBlock[] RACK_BLOCKS = new RackBlock[RackMaterial.values().length * RackMaterial.values().length];
+	public static final ShelfBlock[] SHELF_BLOCKS = new ShelfBlock[ShelfMaterial.values().length * ShelfMaterial.values().length];
 
 	@Override
 	public void onInitialize() {
@@ -34,13 +31,13 @@ public class ExampleMod implements ModInitializer {
 		LOGGER.info("Hello Fabric world!");
 
 		int i = 0;
-		for (var surface: RackMaterial.values()) {
-			for (var support: RackMaterial.values()) {
-				assert i < RACK_BLOCKS.length;
+		for (var surface: ShelfMaterial.values()) {
+			for (var support: ShelfMaterial.values()) {
+				assert i < SHELF_BLOCKS.length;
 				var settigns = reflexiveBlockSettingsDarkMagicDoNotUse(surface.slabBlock, "material", "mapColorProvider");
 				var mcp = (Function<BlockState, MapColor>) settigns[1];
-				var block = new RackBlock(FabricBlockSettings.of((Material) settigns[0], mcp.apply(surface.slabBlock.getDefaultState())).solidBlock((a, b, c) -> false).nonOpaque(), surface, support);
-				RACK_BLOCKS[i++] = block;
+				var block = new ShelfBlock(FabricBlockSettings.of((Material) settigns[0], mcp.apply(surface.slabBlock.getDefaultState())).solidBlock((a, b, c) -> false).nonOpaque(), surface, support);
+				SHELF_BLOCKS[i++] = block;
 				Registry.register(Registry.BLOCK, id(block.createId()), block);
 				Registry.register(Registry.ITEM, id(block.createId()), new BlockItem(block, new FabricItemSettings().group(Items.CHEST.getGroup())));
 			}

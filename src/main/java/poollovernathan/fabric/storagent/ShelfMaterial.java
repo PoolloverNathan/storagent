@@ -2,13 +2,12 @@ package poollovernathan.fabric.storagent;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
 
 import static poollovernathan.fabric.storagent.ExampleMod.id;
 import static poollovernathan.fabric.storagent.ExampleMod.vid;
 
-public enum RackMaterial {
+public enum ShelfMaterial {
     OAK("Oak", Blocks.OAK_SLAB, Blocks.OAK_LOG, vid("block/oak_planks"), vid("block/oak_log")),
     BIRCH("Birch", Blocks.BIRCH_SLAB, Blocks.BIRCH_LOG, vid("block/birch_planks"), vid("block/birch_log")),
     SPRUCE("Spruce", Blocks.SPRUCE_SLAB, Blocks.SPRUCE_LOG, vid("block/spruce_planks"), vid("block/spruce_log")),
@@ -24,7 +23,7 @@ public enum RackMaterial {
     public final Identifier surfaceTexture;
     public final Identifier supportTexture;
 
-    private RackMaterial(String name, Block slabBlock, Block logBlock, Identifier surfaceTexture, Identifier supportTexture) {
+    private ShelfMaterial(String name, Block slabBlock, Block logBlock, Identifier surfaceTexture, Identifier supportTexture) {
 
         this.name = name;
         this.slabBlock = slabBlock;
