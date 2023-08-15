@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import static poollovernathan.fabric.storagent.ExampleMod.SHELF_BLOCK_ENTITY;
 
 public class ShelfEntity extends BlockEntity implements ImplementedInventory {
-    protected final DefaultedList<ItemStack> items = DefaultedList.ofSize(16, Items.WHEAT_SEEDS.getDefaultStack());
+    protected final DefaultedList<ItemStack> items = DefaultedList.ofSize(16, ItemStack.EMPTY);
 
     public ShelfEntity(BlockPos pos, BlockState state) {
         super(SHELF_BLOCK_ENTITY, pos, state);
