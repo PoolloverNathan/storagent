@@ -220,6 +220,21 @@ public class ShelfBlock extends Block implements BlockEntityProvider {
         }
     }
 
+    @Override
+    public boolean hasComparatorOutput(BlockState state) {
+        return true;
+    }
+
+    @Override
+    public int getComparatorOutput(BlockState state, World world, BlockPos pos) {
+        var items = getItems(world, pos).orElse(DefaultedList.ofSize(16, ItemStack.EMPTY));
+        var o = 16;
+        for (var stack: items) {
+            if (stack.isEmpty()) o--;
+        }
+        return o;
+    }
+
     static interface ExposedItemBehavior {
         Optional<ItemStack> precipitationTick(ItemStack stack, Biome.Precipitation precipitation);
         Optional<ItemStack> randomTick(ItemStack stack);
