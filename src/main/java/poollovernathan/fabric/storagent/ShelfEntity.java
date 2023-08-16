@@ -16,6 +16,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 import static poollovernathan.fabric.storagent.ExampleMod.SHELF_BLOCK_ENTITY;
 
 public class ShelfEntity extends BlockEntity implements ImplementedInventory, CappedInventory {
@@ -67,7 +70,17 @@ public class ShelfEntity extends BlockEntity implements ImplementedInventory, Ca
 
     @Override
     public int[] getAvailableSlots(Direction side) {
-        return new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+        var candidates = new ArrayList<Integer>(16);
+        for (var i = 0; i < size(); i++) {
+            if (getStack(i).isEmpty()) {
+                candidates.add(i);
+            }
+        }
+        return switch (candidates.size()) {
+            case 0 -> new int[0];
+            case 1 -> new int[] { candidates.get(0) };
+            default -> new int[] { candidates.get(world.random.nextInt(candidates.size())) };
+        };
     }
 
     @Override
