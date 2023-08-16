@@ -1,6 +1,7 @@
 package poollovernathan.fabric.storagent;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.inventory.Inventories;
@@ -36,6 +37,7 @@ public class ShelfEntity extends BlockEntity implements ImplementedInventory {
     @Override
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
+        items.clear();
         Inventories.readNbt(nbt, items);
     }
 
