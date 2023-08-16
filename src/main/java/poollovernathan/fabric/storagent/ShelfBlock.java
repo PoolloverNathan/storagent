@@ -36,11 +36,11 @@ import static poollovernathan.fabric.storagent.ExampleMod.SHELF_BLOCKS;
 import static poollovernathan.fabric.storagent.ExampleMod.id;
 
 public class ShelfBlock extends Block implements BlockEntityProvider {
-    public final ShelfMaterial surface;
-    public final ShelfMaterial supports;
+    public final ShelfSurfaceMaterial surface;
+    public final ShelfSupportMaterial supports;
     public final ShelfHeight height;
 
-    ShelfBlock(Settings settings, ShelfMaterial surface, ShelfMaterial supports, ShelfHeight height) {
+    ShelfBlock(Settings settings, ShelfSurfaceMaterial surface, ShelfSupportMaterial supports, ShelfHeight height) {
         super(settings);
         this.surface = surface;
         this.supports = supports;
@@ -55,11 +55,11 @@ public class ShelfBlock extends Block implements BlockEntityProvider {
         if (height == ShelfHeight.MEDIUM) {
             return Optional.of(new ShapedRecipeJsonBuilder(asItem(), 1)
                     .group(id("medium_shelves").toString())
-                    .input('f', surface.slabBlock)
-                    .input('p', supports.logBlock)
+                    .input('f', surface.slab)
+                    .input('p', supports.supportsBlock)
                     .pattern("ff")
                     .pattern("pp")
-                    .criterion(createId() + "_recipe", FabricRecipeProvider.conditionsFromItem(surface.slabBlock)));
+                    .criterion(createId() + "_recipe", FabricRecipeProvider.conditionsFromItem(surface.slab)));
         } else {
             return Optional.empty();
         }
@@ -76,7 +76,7 @@ public class ShelfBlock extends Block implements BlockEntityProvider {
                 .criterion(createId() + "_recipe", FabricRecipeProvider.conditionsFromItem(get(surface, supports, ShelfHeight.MEDIUM)));
     }
 
-    public static ShelfBlock get(ShelfMaterial surface, ShelfMaterial supports, ShelfHeight height) {
+    public static ShelfBlock get(ShelfSurfaceMaterial surface, ShelfSupportMaterial supports, ShelfHeight height) {
         for (var block: SHELF_BLOCKS) {
             if (block.surface == surface && block.supports == supports && block.height == height) {
                 return block;

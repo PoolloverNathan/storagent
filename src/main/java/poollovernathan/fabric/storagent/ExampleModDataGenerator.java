@@ -68,9 +68,9 @@ class ModelGenerator extends FabricModelProvider {
 				final var model = new JsonObject();
 				model.addProperty("parent", id("block/base_shelf_" + block.height.name().toLowerCase()).toString());
 				final var textures = new JsonObject();
-				textures.addProperty("supports_top", block.supports.supportTexture.toString() + "_top");
-				textures.addProperty("supports_side", block.supports.supportTexture.toString());
-				textures.addProperty("surface", block.surface.surfaceTexture.toString());
+				textures.addProperty("supports_top", block.supports.sides.toString() + "_top");
+				textures.addProperty("supports_side", block.supports.sides.toString());
+				textures.addProperty("surface", block.surface.surface.toString());
 				model.add("textures", textures);
 				return model;
 			});
