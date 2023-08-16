@@ -51,6 +51,13 @@ public class ShelfEntity extends BlockEntity implements ImplementedInventory {
     }
 
     @Override
+    public void markDirty() {
+        super.markDirty();
+        var state = world.getBlockState(pos);
+        world.updateListeners(pos, state, state, 0);
+    }
+
+    @Override
     public NbtCompound toInitialChunkDataNbt() {
         return createNbt();
     }

@@ -137,6 +137,7 @@ public class ShelfBlock extends Block implements BlockEntityProvider {
                 player.giveItemStack(stack);
                 shelfEntity.setStack(slot, ItemStack.EMPTY);
             }
+            shelfEntity.markDirty();
             return ActionResult.SUCCESS;
         } else {
             ExampleMod.LOGGER.error("Shelf at %s %s has no block entity".formatted(world.getRegistryKey().getValue(), pos));
