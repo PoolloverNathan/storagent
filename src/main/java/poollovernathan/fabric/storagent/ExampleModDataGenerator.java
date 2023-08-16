@@ -14,8 +14,7 @@ import net.minecraft.util.registry.Registry;
 
 import java.util.function.Consumer;
 
-import static poollovernathan.fabric.storagent.ExampleMod.SHELF_BLOCKS;
-import static poollovernathan.fabric.storagent.ExampleMod.id;
+import static poollovernathan.fabric.storagent.ExampleMod.*;
 
 public class ExampleModDataGenerator implements DataGeneratorEntrypoint {
 	@Override
@@ -80,7 +79,7 @@ class ModelGenerator extends FabricModelProvider {
 
 	@Override
 	public void generateItemModels(ItemModelGenerator itemModelGenerator) {
-
+		itemModelGenerator.register(SHELVING_WAND_ITEM, Models.HANDHELD);
 	}
 }
 
