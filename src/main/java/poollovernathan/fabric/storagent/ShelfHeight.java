@@ -1,7 +1,6 @@
 package poollovernathan.fabric.storagent;
 
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.registry.Registry;
@@ -25,5 +24,14 @@ public enum ShelfHeight {
         this.height = height;
         this.itemTagKey = TagKey.of(Registry.ITEM_KEY, id("%s_shelves".formatted(name().toLowerCase())));
         this.blockTagKey = TagKey.of(Registry.BLOCK_KEY, id("%s_shelves".formatted(name().toLowerCase())));
+    }
+
+    public ShelfHeight increment() {
+        var idx = this.ordinal() + 1;
+        return ShelfHeight.values()[idx % ShelfHeight.values().length];
+    }
+    public ShelfHeight decrement() {
+        var idx = this.ordinal() - 1;
+        return ShelfHeight.values()[idx % ShelfHeight.values().length];
     }
 }

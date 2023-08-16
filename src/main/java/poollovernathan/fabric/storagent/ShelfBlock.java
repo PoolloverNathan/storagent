@@ -131,6 +131,14 @@ public class ShelfBlock extends Block implements BlockEntityProvider {
     }
 
     @Override
+    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+        if (state.getBlock() instanceof ShelfBlock && newState.getBlock() instanceof ShelfBlock) {
+            return;
+        }
+        super.onStateReplaced(state, world, pos, newState, moved);
+    }
+
+    @Override
     protected ImmutableMap<BlockState, VoxelShape> getShapesForStates(Function<BlockState, VoxelShape> stateToShape) {
         return ImmutableMap.<BlockState, VoxelShape>builder().put(getDefaultState(), getShape(height)).build();
     }

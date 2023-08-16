@@ -8,9 +8,12 @@ import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityT
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.Items;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Lazy;
+import net.minecraft.util.Rarity;
 import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
@@ -26,6 +29,7 @@ public class ExampleMod implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger("Your Storage Problem");
 	public static final ShelfBlock[] SHELF_BLOCKS = new ShelfBlock[ShelfSurfaceMaterial.values().length * ShelfSupportMaterial.values().length * ShelfHeight.values().length];
 	public static final Lazy<BlockEntityType<ShelfEntity>> SHELF_BLOCK_ENTITY = new Lazy<>(() -> FabricBlockEntityTypeBuilder.create(ShelfEntity::new, SHELF_BLOCKS).build());
+	public static final Item SHELVING_WAND_ITEM = new ShelvingWandItem(new FabricItemSettings().rarity(Rarity.RARE).group(ItemGroup.TOOLS).maxCount(1));
 
 	@Override
 	public void onInitialize() {
@@ -51,6 +55,7 @@ public class ExampleMod implements ModInitializer {
 		}
 		LOGGER.info("Created %s dynamic models.".formatted(SHELF_BLOCKS.length));
 		Registry.register(Registry.BLOCK_ENTITY_TYPE, id("shelf"), SHELF_BLOCK_ENTITY.get());
+		Registry.register(Registry.ITEM, id("shelving_wand"), SHELVING_WAND_ITEM);
 	}
 
 	public static Object[] reflexiveBlockSettingsDarkMagicDoNotUse(AbstractBlock block, String... keys) {
