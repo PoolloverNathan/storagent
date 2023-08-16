@@ -12,7 +12,6 @@ public class ShelfRenderer implements BlockEntityRenderer<ShelfEntity> {
     public ShelfRenderer(BlockEntityRendererFactory.Context ctx) {}
     @Override
     public void render(ShelfEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
-        ExampleMod.LOGGER.info("we loggin");
         ItemRenderer itemRenderer = MinecraftClient.getInstance().getItemRenderer();
         for (var x = 0; x < 4; x++) {
             for (var z = 0; z < 4; z++) {

@@ -15,6 +15,6 @@ public class ExampleModClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
 		LOGGER.info("Client initialized!");
-		BlockEntityRendererRegistry.register(SHELF_BLOCK_ENTITY, ShelfRenderer::new);
+		BlockEntityRendererRegistry.register(SHELF_BLOCK_ENTITY.get(), ShelfRenderer::new);
 	}
 }

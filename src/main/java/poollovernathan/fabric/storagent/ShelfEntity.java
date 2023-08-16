@@ -20,7 +20,7 @@ public class ShelfEntity extends BlockEntity implements ImplementedInventory {
     protected final DefaultedList<ItemStack> items = DefaultedList.ofSize(16, ItemStack.EMPTY);
 
     public ShelfEntity(BlockPos pos, BlockState state) {
-        super(SHELF_BLOCK_ENTITY, pos, state);
+        super(SHELF_BLOCK_ENTITY.get(), pos, state);
     }
 
     @Override

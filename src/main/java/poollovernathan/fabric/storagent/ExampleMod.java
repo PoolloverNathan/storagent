@@ -11,6 +11,7 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Items;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Lazy;
 import net.minecraft.util.registry.Registry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,7 @@ public class ExampleMod implements ModInitializer {
 	public static final String MOD_ID = "storagent";
     public static final Logger LOGGER = LoggerFactory.getLogger("Your Storage Problem");
 	public static final ShelfBlock[] SHELF_BLOCKS = new ShelfBlock[ShelfMaterial.values().length * ShelfMaterial.values().length];
-	public static final BlockEntityType<ShelfEntity> SHELF_BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(ShelfEntity::new).build();
+	public static final Lazy<BlockEntityType<ShelfEntity>> SHELF_BLOCK_ENTITY = new Lazy<>(() -> FabricBlockEntityTypeBuilder.create(ShelfEntity::new, SHELF_BLOCKS).build());
 
 	@Override
 	public void onInitialize() {
@@ -46,7 +47,7 @@ public class ExampleMod implements ModInitializer {
 				Registry.register(Registry.ITEM, id(block.createId()), new BlockItem(block, new FabricItemSettings().group(Items.CHEST.getGroup())));
 			}
 		}
-		Registry.register(Registry.BLOCK_ENTITY_TYPE, id("shelf"), SHELF_BLOCK_ENTITY);
+		Registry.register(Registry.BLOCK_ENTITY_TYPE, id("shelf"), SHELF_BLOCK_ENTITY.get());
 	}
 
 	public static Object[] reflexiveBlockSettingsDarkMagicDoNotUse(AbstractBlock block, String... keys) {
