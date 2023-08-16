@@ -1,20 +1,24 @@
 package poollovernathan.fabric.storagent;
 
 import com.google.common.collect.ImmutableMap;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.data.server.AbstractTagProvider;
 import net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ExperienceBottleItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.tag.TagKey;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.collection.DefaultedList;
@@ -23,6 +27,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
@@ -37,6 +42,8 @@ import java.util.function.Function;
 import static poollovernathan.fabric.storagent.ExampleMod.*;
 
 public class ShelfBlock extends Block implements BlockEntityProvider {
+    public static final TagKey<Block> BLOCK_TAG_KEY = TagKey.of(Registry.BLOCK_KEY, id("shelves"));
+    public static final TagKey<Item> ITEM_TAG_KEY = TagKey.of(Registry.ITEM_KEY, id("shelves"));
     public final ShelfSurfaceMaterial surface;
     public final ShelfSupportMaterial supports;
     public final ShelfHeight height;
@@ -46,6 +53,27 @@ public class ShelfBlock extends Block implements BlockEntityProvider {
         this.surface = surface;
         this.supports = supports;
         this.height = height;
+    }
+
+    public static FabricTagProvider.BlockTagProvider provideBlockTags(FabricDataGenerator gen) {
+        return new FabricTagProvider.BlockTagProvider(gen) {
+            @Override
+            protected void generateTags() {
+                for (var block: SHELF_BLOCKS) {
+                    block.sendBlockTags(this::getOrCreateTagBuilder);
+                }
+            }
+        };
+    }
+    public static FabricTagProvider.ItemTagProvider provideItemTags(FabricDataGenerator gen) {
+        return new FabricTagProvider.ItemTagProvider(gen) {
+            @Override
+            protected void generateTags() {
+                for (var block: SHELF_BLOCKS) {
+                    block.sendItemTags(this::getOrCreateTagBuilder);
+                }
+            }
+        };
     }
 
     public String createId() {
@@ -233,6 +261,18 @@ public class ShelfBlock extends Block implements BlockEntityProvider {
             if (stack.isEmpty()) o--;
         }
         return o;
+    }
+
+    public void sendBlockTags(Function<TagKey<Block>, AbstractTagProvider.ObjectBuilder<Block>> getBlockBuilder) {
+        for (var blockTag : List.of(surface.blockTagKey, surface.containBlockTagKey, supports.blockTagKey, supports.containBlockTagKey, height.blockTagKey, BLOCK_TAG_KEY)) {
+            getBlockBuilder.apply(blockTag).add(this);
+        }
+    }
+
+    public void sendItemTags(Function<TagKey<Item>, AbstractTagProvider.ObjectBuilder<Item>> getItemBuilder) {
+        for (var itemTag : List.of(surface.itemTagKey, surface.containItemTagKey, supports.itemTagKey, supports.containItemTagKey, height.itemTagKey, ITEM_TAG_KEY)) {
+            getItemBuilder.apply(itemTag).add(asItem());
+        }
     }
 
     static interface ExposedItemBehavior {

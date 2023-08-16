@@ -4,12 +4,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
+import net.fabricmc.fabric.api.datagen.v1.provider.*;
 import net.minecraft.block.Block;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.data.client.*;
+import net.minecraft.data.server.BlockTagProvider;
 import net.minecraft.data.server.recipe.RecipeJsonProvider;
 import net.minecraft.util.registry.Registry;
 
@@ -25,6 +24,8 @@ public class ExampleModDataGenerator implements DataGeneratorEntrypoint {
 		fabricDataGenerator.addProvider(RecipeGenerator::new);
 		fabricDataGenerator.addProvider(LootGenerator::new);
 		fabricDataGenerator.addProvider(LangGenerator::new);
+		fabricDataGenerator.addProvider(ShelfBlock::provideBlockTags);
+		fabricDataGenerator.addProvider(ShelfBlock::provideItemTags);
 	}
 }
 

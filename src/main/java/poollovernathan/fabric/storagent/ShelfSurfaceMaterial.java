@@ -2,8 +2,12 @@ package poollovernathan.fabric.storagent;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 
+import static poollovernathan.fabric.storagent.ExampleMod.id;
 import static poollovernathan.fabric.storagent.ExampleMod.vid;
 
 public enum ShelfSurfaceMaterial {
@@ -26,11 +30,18 @@ public enum ShelfSurfaceMaterial {
     public final String name;
     public final Block slab;
     public final Identifier surface;
+    public final TagKey<Item> itemTagKey;
+    public final TagKey<Block> blockTagKey;
+    public final TagKey<Item> containItemTagKey;
+    public final TagKey<Block> containBlockTagKey;
 
     private ShelfSurfaceMaterial(String name, Block slab, Identifier surface) {
-
         this.name = name;
         this.slab = slab;
         this.surface = surface;
+        this.itemTagKey = TagKey.of(Registry.ITEM_KEY, id("%s_supports".formatted(name().toLowerCase())));
+        this.blockTagKey = TagKey.of(Registry.BLOCK_KEY, id("%s_supports".formatted(name().toLowerCase())));
+        this.containItemTagKey = TagKey.of(Registry.ITEM_KEY, id("%s_shelves".formatted(name().toLowerCase())));
+        this.containBlockTagKey = TagKey.of(Registry.BLOCK_KEY, id("%s_shelves".formatted(name().toLowerCase())));
     }
 }
