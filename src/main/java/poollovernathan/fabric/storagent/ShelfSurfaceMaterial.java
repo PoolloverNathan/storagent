@@ -14,7 +14,14 @@ public enum ShelfSurfaceMaterial {
     ACACIA("Acacia", Blocks.ACACIA_SLAB, vid("block/acacia_planks")),
     DARK_OAK("Dark Oak", Blocks.DARK_OAK_SLAB, vid("block/dark_oak_planks")),
     CRIMSON("Crimson", Blocks.CRIMSON_SLAB, vid("block/crimson_planks")),
-    WARPED("Warped", Blocks.WARPED_SLAB, vid("block/warped_planks"));
+    WARPED("Warped", Blocks.WARPED_SLAB, vid("block/warped_planks")),
+    DEEPSLATE("Deepslate", Blocks.POLISHED_DEEPSLATE_SLAB, vid("block/polished_deepslate")),
+    SMOOTH_STONE("Smooth Stone", Blocks.SMOOTH_STONE_SLAB, vid("block/smooth_stone")),
+    POLISHED_ANDESITE("Polished Andesite", Blocks.POLISHED_ANDESITE_SLAB, vid("block/polished_andesite")),
+    POLISHED_DIORITE("Polished Diorite", Blocks.POLISHED_DIORITE_SLAB, vid("block/polished_diorite")),
+    POLISHED_GRANITE("Polished Granite", Blocks.POLISHED_GRANITE_SLAB, vid("block/polished_granite")),
+    BLACKSTONE("Blackstone", Blocks.BLACKSTONE_SLAB, vid("block/blackstone")),
+    ;
 
     public final String name;
     public final Block slab;

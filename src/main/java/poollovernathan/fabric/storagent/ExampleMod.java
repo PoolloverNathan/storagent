@@ -24,7 +24,7 @@ public class ExampleMod implements ModInitializer {
 	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final String MOD_ID = "storagent";
     public static final Logger LOGGER = LoggerFactory.getLogger("Your Storage Problem");
-	public static final ShelfBlock[] SHELF_BLOCKS = new ShelfBlock[ShelfSupportMaterial.values().length * ShelfSupportMaterial.values().length * ShelfHeight.values().length];
+	public static final ShelfBlock[] SHELF_BLOCKS = new ShelfBlock[ShelfSurfaceMaterial.values().length * ShelfSupportMaterial.values().length * ShelfHeight.values().length];
 	public static final Lazy<BlockEntityType<ShelfEntity>> SHELF_BLOCK_ENTITY = new Lazy<>(() -> FabricBlockEntityTypeBuilder.create(ShelfEntity::new, SHELF_BLOCKS).build());
 
 	@Override
