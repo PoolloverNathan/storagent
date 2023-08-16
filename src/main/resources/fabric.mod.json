@@ -3,9 +3,9 @@
 	"id": "storagent",
 	"version": "${version}",
 	"name": "Your Storage Problem",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "Adds shelves that store 16 items.",
 	"authors": [
-		"Me!"
+		"PoolloverNathan"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",

@@ -13,11 +13,12 @@ import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import org.jetbrains.annotations.Nullable;
 
 import static poollovernathan.fabric.storagent.ExampleMod.SHELF_BLOCK_ENTITY;
 
-public class ShelfEntity extends BlockEntity implements ImplementedInventory {
+public class ShelfEntity extends BlockEntity implements ImplementedInventory, CappedInventory {
     protected final DefaultedList<ItemStack> items = DefaultedList.ofSize(16, ItemStack.EMPTY);
 
     public ShelfEntity(BlockPos pos, BlockState state) {
@@ -62,5 +63,15 @@ public class ShelfEntity extends BlockEntity implements ImplementedInventory {
     @Override
     public NbtCompound toInitialChunkDataNbt() {
         return createNbt();
+    }
+
+    @Override
+    public int[] getAvailableSlots(Direction side) {
+        return new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+    }
+
+    @Override
+    public boolean canExtract(int slot, ItemStack stack, Direction dir) {
+        return true;
     }
 }
