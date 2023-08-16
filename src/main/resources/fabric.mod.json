@@ -8,10 +8,10 @@
 		"PoolloverNathan"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "https://github.com/PoolloverNathan/storagent",
+		"sources": "https://github.com/PoolloverNathan/storagent"
 	},
-	"license": "CC0-1.0",
+	"license": "GNU-GPL3",
 	"icon": "assets/storagent/icon.png",
 	"environment": "*",
 	"entrypoints": {
@@ -37,8 +37,5 @@
 		"minecraft": "~1.19.2",
 		"java": ">=17",
 		"fabric-api": "*"
-	},
-	"suggests": {
-		"another-mod": "*"
 	}
 }
