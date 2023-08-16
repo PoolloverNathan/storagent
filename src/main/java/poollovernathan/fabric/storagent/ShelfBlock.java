@@ -12,10 +12,12 @@ import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ExperienceBottleItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -32,8 +34,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-import static poollovernathan.fabric.storagent.ExampleMod.SHELF_BLOCKS;
-import static poollovernathan.fabric.storagent.ExampleMod.id;
+import static poollovernathan.fabric.storagent.ExampleMod.*;
 
 public class ShelfBlock extends Block implements BlockEntityProvider {
     public final ShelfSurfaceMaterial surface;
@@ -120,7 +121,19 @@ public class ShelfBlock extends Block implements BlockEntityProvider {
 
     @Override
     public void precipitationTick(BlockState state, World world, BlockPos pos, Biome.Precipitation precipitation) {
-        // TODO: Once block entity is added, run ExposedItemBehavior::precipitationTick(precipitation) on all implementing items
+        var items = getItems(world, pos);
+        if (items.isPresent()) {
+            var i = 0;
+            for (var stack: items.get()) {
+                if (stack.getItem() instanceof ExposedItemBehavior exposedItem) {
+                    var result = exposedItem.precipitationTick(stack, precipitation);
+                    if (result.isPresent()) {
+                        items.get().set(i, result.get());
+                    }
+                }
+                i++;
+            }
+        }
     }
 
     @Override
@@ -138,9 +151,25 @@ public class ShelfBlock extends Block implements BlockEntityProvider {
         return getShape(height);
     }
 
+    protected Optional<DefaultedList<ItemStack>> getItems(World world, BlockPos pos) {
+        return world.getBlockEntity(pos, SHELF_BLOCK_ENTITY.get()).map((entity) -> entity.items);
+    }
+
     @Override
     public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        // TODO: Once block entity is added, run ExposedItemBehavior::randomTick() on all implementing items
+        var items = getItems(world, pos);
+        if (items.isPresent()) {
+            var i = 0;
+            for (var stack: items.get()) {
+                if (stack.getItem() instanceof ExposedItemBehavior exposedItem) {
+                    var result = exposedItem.randomTick(stack);
+                    if (result.isPresent()) {
+                        items.get().set(i, result.get());
+                    }
+                }
+                i++;
+            }
+        }
     }
 
     @Nullable
@@ -191,8 +220,8 @@ public class ShelfBlock extends Block implements BlockEntityProvider {
         }
     }
 
-    interface ExposedItemBehavior {
-        void precipitationTick(ItemStack stack, Biome.Precipitation precipitation);
-        void randomTick(ItemStack stack);
+    static interface ExposedItemBehavior {
+        Optional<ItemStack> precipitationTick(ItemStack stack, Biome.Precipitation precipitation);
+        Optional<ItemStack> randomTick(ItemStack stack);
     }
 }
