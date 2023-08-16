@@ -3,7 +3,7 @@
 	"textures": {
 		"supports_top": "oak_log_top",
 		"supports_side": "oak_log",
-		"particle": "#surface",
+		"particle": "oak_planks",
 		"surface": "oak_planks"
 	},
 	"elements": [

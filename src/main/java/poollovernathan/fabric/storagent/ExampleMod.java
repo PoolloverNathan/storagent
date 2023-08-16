@@ -24,7 +24,7 @@ public class ExampleMod implements ModInitializer {
 	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final String MOD_ID = "storagent";
     public static final Logger LOGGER = LoggerFactory.getLogger("Your Storage Problem");
-	public static final ShelfBlock[] SHELF_BLOCKS = new ShelfBlock[ShelfMaterial.values().length * ShelfMaterial.values().length];
+	public static final ShelfBlock[] SHELF_BLOCKS = new ShelfBlock[ShelfMaterial.values().length * ShelfMaterial.values().length * ShelfHeight.values().length];
 	public static final Lazy<BlockEntityType<ShelfEntity>> SHELF_BLOCK_ENTITY = new Lazy<>(() -> FabricBlockEntityTypeBuilder.create(ShelfEntity::new, SHELF_BLOCKS).build());
 
 	@Override
@@ -37,14 +37,16 @@ public class ExampleMod implements ModInitializer {
 
 		int i = 0;
 		for (var surface: ShelfMaterial.values()) {
-			for (var support: ShelfMaterial.values()) {
-				assert i < SHELF_BLOCKS.length;
-				var settigns = reflexiveBlockSettingsDarkMagicDoNotUse(surface.slabBlock, "material", "mapColorProvider");
-				var mcp = (Function<BlockState, MapColor>) settigns[1];
-				var block = new ShelfBlock(FabricBlockSettings.of((Material) settigns[0], mcp.apply(surface.slabBlock.getDefaultState())).solidBlock((a, b, c) -> false).nonOpaque(), surface, support);
-				SHELF_BLOCKS[i++] = block;
-				Registry.register(Registry.BLOCK, id(block.createId()), block);
-				Registry.register(Registry.ITEM, id(block.createId()), new BlockItem(block, new FabricItemSettings().group(Items.CHEST.getGroup())));
+			for (var support : ShelfMaterial.values()) {
+				for (var height : ShelfHeight.values()) {
+					assert i < SHELF_BLOCKS.length;
+					var settigns = reflexiveBlockSettingsDarkMagicDoNotUse(surface.slabBlock, "material", "mapColorProvider");
+					var mcp = (Function<BlockState, MapColor>) settigns[1];
+					var block = new ShelfBlock(FabricBlockSettings.of((Material) settigns[0], mcp.apply(surface.slabBlock.getDefaultState())).solidBlock((a, b, c) -> false).nonOpaque(), surface, support, height);
+					SHELF_BLOCKS[i++] = block;
+					Registry.register(Registry.BLOCK, id(block.createId()), block);
+					Registry.register(Registry.ITEM, id(block.createId()), new BlockItem(block, new FabricItemSettings().group(Items.CHEST.getGroup())));
+				}
 			}
 		}
 		Registry.register(Registry.BLOCK_ENTITY_TYPE, id("shelf"), SHELF_BLOCK_ENTITY.get());

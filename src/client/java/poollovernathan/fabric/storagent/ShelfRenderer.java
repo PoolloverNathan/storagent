@@ -19,7 +19,7 @@ public class ShelfRenderer implements BlockEntityRenderer<ShelfEntity> {
                 var stack = entity.getStack(slot);
                 if (!stack.isEmpty()) {
                     matrices.push();
-                    matrices.translate((x / 4f) + 0.125, 0.5, (z / 4f) + 0.125);
+                    matrices.translate((x / 4f) + 0.125, (entity.getCachedState().getBlock() instanceof ShelfBlock shelf ? shelf.height.height : 0.5), (z / 4f) + 0.125);
                     itemRenderer.renderItem(stack, ModelTransformation.Mode.GROUND, light, overlay, matrices, vertexConsumers, 0);
                     matrices.pop();
                 }

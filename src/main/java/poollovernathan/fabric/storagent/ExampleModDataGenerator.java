@@ -66,7 +66,7 @@ class ModelGenerator extends FabricModelProvider {
 			});
 			blockStateModelGenerator.modelCollector.accept(id, () -> {
 				final var model = new JsonObject();
-				model.addProperty("parent", id("block/base_shelf").toString());
+				model.addProperty("parent", id("block/base_shelf_" + block.height.name().toLowerCase()).toString());
 				final var textures = new JsonObject();
 				textures.addProperty("supports_top", block.supports.supportTexture.toString() + "_top");
 				textures.addProperty("supports_side", block.supports.supportTexture.toString());
@@ -92,7 +92,11 @@ class RecipeGenerator extends FabricRecipeProvider {
 	@Override
 	protected void generateRecipes(Consumer<RecipeJsonProvider> exporter) {
 		for (var block: SHELF_BLOCKS) {
-			block.createRecipe().offerTo(exporter);
+			block.createSwitchRecipe().offerTo(exporter, block.createId() + "_conversion");
+			block.createCraftingRecipe().map(recipe -> {
+				recipe.offerTo(exporter, block.createId());
+				return null;
+			});
 		}
 	}
 }
