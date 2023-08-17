@@ -15,13 +15,18 @@ import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.BundleItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.recipe.Ingredient;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Pair;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -233,8 +238,14 @@ public class ShelfBlock extends Block implements BlockEntityProvider {
                 if (stack.isEmpty()) {
                     shelfEntity.setStack(slot, player.getStackInHand(hand).split(1));
                 } else {
-                    player.giveItemStack(stack);
-                    shelfEntity.setStack(slot, ItemStack.EMPTY);
+                    var craftedItem = craftViaShelfInteraction(player, stack);
+                    if (craftedItem.isPresent()) {
+                        shelfEntity.setStack(slot, craftedItem.get().getLeft());
+                        world.playSound(hit.getPos().x, hit.getPos().y, hit.getPos().z, craftedItem.get().getRight(), SoundCategory.PLAYERS, 1, 1, true);
+                    } else {
+                        player.giveItemStack(stack);
+                        shelfEntity.setStack(slot, ItemStack.EMPTY);
+                    }
                 }
             }
             shelfEntity.markDirty();
@@ -243,6 +254,17 @@ public class ShelfBlock extends Block implements BlockEntityProvider {
             ExampleMod.LOGGER.error("Shelf at %s %s has no block entity".formatted(world.getRegistryKey().getValue(), pos));
             return ActionResult.FAIL;
         }
+    }
+
+    private Optional<Pair<ItemStack, SoundEvent>> craftViaShelfInteraction(PlayerEntity player, ItemStack shelfStack) {
+        var mainhand = player.getStackInHand(Hand.MAIN_HAND);
+        var offhand = player.getStackInHand(Hand.OFF_HAND);
+        if (mainhand.getItem() == Items.BUNDLE && shelfStack.getItem() == Items.STICK && offhand.getItem() == Items.ENDER_PEARL) {
+            mainhand.decrement(1);
+            offhand.decrement(1);
+            return Optional.of(new Pair<>(SHELVING_WAND_ITEM.getDefaultStack(), new SoundEvent(vid("minecraft:item.axe.strip"))));
+        }
+        return Optional.empty();
     }
 
     public void dropContents(World world, BlockPos pos, ShelfEntity shelf, boolean clearItems) {
