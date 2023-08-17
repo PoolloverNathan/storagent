@@ -5,6 +5,8 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
+import net.fabricmc.fabric.mixin.object.builder.AbstractBlockAccessor;
+import net.fabricmc.fabric.mixin.object.builder.AbstractBlockSettingsAccessor;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.BlockItem;
@@ -44,9 +46,9 @@ public class ExampleMod implements ModInitializer {
 			for (var support : ShelfSupportMaterial.values()) {
 				for (var height : ShelfHeight.values()) {
 					assert i < SHELF_BLOCKS.length;
-					var settigns = reflexiveBlockSettingsDarkMagicDoNotUse(surface.slab, "material", "mapColorProvider");
-					var mcp = (Function<BlockState, MapColor>) settigns[1];
-					var block = new ShelfBlock(FabricBlockSettings.of((Material) settigns[0], mcp.apply(surface.slab.getDefaultState())).solidBlock((a, b, c) -> false).nonOpaque(), surface, support, height);
+					var settigns = (AbstractBlockSettingsAccessor)(((AbstractBlockAccessor)surface.slab).getSettings());
+					var mcp = (Function<BlockState, MapColor>) settigns.getMapColorProvider();
+					var block = new ShelfBlock(FabricBlockSettings.of((Material) settigns.getMaterial(), mcp.apply(surface.slab.getDefaultState())).solidBlock((a, b, c) -> false).nonOpaque(), surface, support, height);
 					SHELF_BLOCKS[i++] = block;
 					Registry.register(Registry.BLOCK, id(block.createId()), block);
 					Registry.register(Registry.ITEM, id(block.createId()), new BlockItem(block, new FabricItemSettings().group(Items.CHEST.getGroup())));
@@ -58,27 +60,6 @@ public class ExampleMod implements ModInitializer {
 		Registry.register(Registry.ITEM, id("shelving_wand"), SHELVING_WAND_ITEM);
 	}
 
-	public static Object[] reflexiveBlockSettingsDarkMagicDoNotUse(AbstractBlock block, String... keys) {
-		AbstractBlock.Settings settings;
-		try {
-			var field = block.getClass().getField("settings");
-			field.setAccessible(true);
-			settings = (AbstractBlock.Settings)(field.get(block));
-		} catch (NoSuchFieldException | IllegalAccessException e) {
-			throw new RuntimeException("Reflexive settings access failed - this should never happen", e);
-		}
-		var got = new Object[keys.length];
-		for (int i = 0; i < keys.length; i++) {
-			try {
-				var field = AbstractBlock.Settings.class.getField(keys[i]);
-				field.setAccessible(true);
-				got[i] = field.get(settings);
-			} catch (NoSuchFieldException | IllegalAccessException e) {
-				throw new RuntimeException("Failed to reflexively access settings field " + keys[i], e);
-			}
-		}
-		return got;
-	}
 
 
 	@Contract(value = "!null -> !null; _ -> fail", pure = true)
