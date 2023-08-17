@@ -74,4 +74,28 @@ public class ExampleMod implements ModInitializer {
 	public static Identifier vid(String name) {
 		return id("minecraft", name);
 	}
+
+	public static boolean between(float value, float min, float max) {
+		return between(value, min, max, false);
+	}
+
+	public static boolean between(float value, float min, float max, boolean exclusive) {
+		if (exclusive) {
+			return value > min && value < max;
+		} else {
+			return value >= min && value <= max;
+		}
+	}
+	
+	public static boolean between(double value, double min, double max) {
+		return between(value, min, max, false);
+	}
+
+	public static boolean between(double value, double min, double max, boolean exclusive) {
+		if (exclusive) {
+			return value > min && value < max;
+		} else {
+			return value >= min && value <= max;
+		}
+	}
 }

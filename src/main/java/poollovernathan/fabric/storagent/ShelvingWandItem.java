@@ -10,12 +10,15 @@ import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Contract;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+
+import static poollovernathan.fabric.storagent.ExampleMod.between;
 
 public class ShelvingWandItem extends BundleItem {
     @Override
@@ -36,9 +39,18 @@ public class ShelvingWandItem extends BundleItem {
             var world = context.getWorld();
             var wbs = world.getBlockState(context.getBlockPos());
             if (wbs.getBlock() instanceof ShelfBlock shelfBlock) {
-                var nextBlock = ShelfBlock.get(shelfBlock.surface, shelfBlock.supports, shelfBlock.height.increment());
-                if (world.setBlockState(context.getBlockPos(), nextBlock.getDefaultState())) {
-                    return ActionResult.SUCCESS;
+                var blockRelPos = context.getHitPos();
+                blockRelPos = new Vec3d(blockRelPos.x % 1, blockRelPos.y % 1, blockRelPos.z % 1);
+                switch (context.getSide()) {
+                    case UP, DOWN -> {
+                        var nextBlock = ShelfBlock.get(shelfBlock.surface, shelfBlock.supports, between(blockRelPos.x, 0.125, 0.875) && between(blockRelPos.z, 0.125, 0.875) ? shelfBlock.height.increment() : shelfBlock.height.decrement());
+                        if (world.setBlockState(context.getBlockPos(), nextBlock.getDefaultState())) {
+                            return ActionResult.SUCCESS;
+                        }
+                    }
+                    default -> {
+                        return ActionResult.PASS;
+                    }
                 }
             }
         }
