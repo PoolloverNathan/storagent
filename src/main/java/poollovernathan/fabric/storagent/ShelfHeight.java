@@ -31,7 +31,7 @@ public enum ShelfHeight {
         return ShelfHeight.values()[idx % ShelfHeight.values().length];
     }
     public ShelfHeight decrement() {
-        var idx = this.ordinal() - 1;
+        var idx = this.ordinal() + ShelfHeight.values().length - 1;
         return ShelfHeight.values()[idx % ShelfHeight.values().length];
     }
 }
