@@ -18,6 +18,7 @@ import net.minecraft.util.Lazy;
 import net.minecraft.util.Rarity;
 import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,6 +78,11 @@ public class ExampleMod implements ModInitializer {
 
 	public static boolean between(float value, float min, float max) {
 		return between(value, min, max, false);
+	}
+
+	@Contract(value = "_ -> fail", pure = true)
+	public static <T extends Throwable, R> R fail(@NotNull T error) throws T {
+		throw error;
 	}
 
 	public static boolean between(float value, float min, float max, boolean exclusive) {

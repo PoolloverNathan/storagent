@@ -17,6 +17,7 @@ import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.ActionResult;
@@ -134,6 +135,8 @@ public class ShelfBlock extends Block implements BlockEntityProvider {
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         if (state.getBlock() instanceof ShelfBlock && newState.getBlock() instanceof ShelfBlock) {
             return;
+        } else if (!moved) {
+            dropContents(world, pos, world.getBlockEntity(pos) instanceof ShelfEntity shelf ? shelf : fail(new IllegalStateException("Shelf does not have shelf entity")), false);
         }
         super.onStateReplaced(state, world, pos, newState, moved);
     }
@@ -223,12 +226,16 @@ public class ShelfBlock extends Block implements BlockEntityProvider {
         var slot = slotZ * 4 + slotX;
         var entity = world.getBlockEntity(pos);
         if (entity instanceof ShelfEntity shelfEntity) {
-            var stack = shelfEntity.getStack(slot);
-            if (stack.isEmpty()) {
-                shelfEntity.setStack(slot, player.getStackInHand(hand).split(1));
+            if (player.isSneaking()) {
+                dropContents(world, pos, shelfEntity, true);
             } else {
-                player.giveItemStack(stack);
-                shelfEntity.setStack(slot, ItemStack.EMPTY);
+                var stack = shelfEntity.getStack(slot);
+                if (stack.isEmpty()) {
+                    shelfEntity.setStack(slot, player.getStackInHand(hand).split(1));
+                } else {
+                    player.giveItemStack(stack);
+                    shelfEntity.setStack(slot, ItemStack.EMPTY);
+                }
             }
             shelfEntity.markDirty();
             return ActionResult.SUCCESS;
@@ -238,21 +245,23 @@ public class ShelfBlock extends Block implements BlockEntityProvider {
         }
     }
 
-    @Override
-    public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
-        if (world.getBlockEntity(pos) instanceof ShelfEntity shelf) {
-            for (var x = 0; x < 4; x++) {
-                for (var z = 0; z < 4; z++) {
-                    var slot = z * 4 + x;
-                    var stack = shelf.getStack(slot);
-                    if (!stack.isEmpty()) {
-                        var itemPos = new Vec3d(pos.getX() + ((pos.getX() < 0 ? 3 - x : x) / 4f) + 0.125, pos.getY() + 0.5, pos.getZ() + ((pos.getZ() < 0 ? 3 - z : z) / 4f) + 0.125);
-                        var entity = new ItemEntity(world, itemPos.x, itemPos.y, itemPos.z, stack, 0, 0.1, 0);
-                        world.spawnEntity(entity);
-                        entity.setPos(itemPos.x, itemPos.y, itemPos.z);
-                    }
+    public void dropContents(World world, BlockPos pos, ShelfEntity shelf, boolean clearItems) {
+        for (var x = 0; x < 4; x++) {
+            for (var z = 0; z < 4; z++) {
+                var slot = z * 4 + x;
+                var stack = shelf.getStack(slot);
+                if (!stack.isEmpty()) {
+                    var itemPos = new Vec3d(pos.getX() + ((pos.getX() < 0 ? 3 - x : x) / 4f) + 0.125, pos.getY() + height.height, pos.getZ() + ((pos.getZ() < 0 ? 3 - z : z) / 4f) + 0.125);
+                    var entity = new ItemEntity(world, itemPos.x, itemPos.y, itemPos.z, stack, 0, 0.1, 0);
+                    entity.age = slot; // should help prevent item deletion
+                    world.spawnEntity(entity);
+                    entity.setPos(itemPos.x, itemPos.y, itemPos.z);
                 }
             }
+        }
+        if (clearItems) {
+            shelf.items.clear();
+            shelf.markDirty();
         }
     }
 
