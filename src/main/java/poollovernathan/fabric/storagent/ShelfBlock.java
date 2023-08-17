@@ -19,6 +19,7 @@ import net.minecraft.item.BundleItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -262,7 +263,7 @@ public class ShelfBlock extends Block implements BlockEntityProvider {
         if (mainhand.getItem() == Items.BUNDLE && shelfStack.getItem() == Items.STICK && offhand.getItem() == Items.ENDER_PEARL) {
             mainhand.decrement(1);
             offhand.decrement(1);
-            return Optional.of(new Pair<>(SHELVING_WAND_ITEM.getDefaultStack(), new SoundEvent(vid("minecraft:item.axe.strip"))));
+            return Optional.of(new Pair<>(SHELVING_WAND_ITEM.getDefaultStack(), new SoundEvent(vid("item.axe.strip"))));
         }
         return Optional.empty();
     }
