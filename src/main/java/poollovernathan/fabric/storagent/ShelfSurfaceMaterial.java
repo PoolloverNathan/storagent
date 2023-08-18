@@ -39,8 +39,8 @@ public enum ShelfSurfaceMaterial {
         this.name = name;
         this.slab = slab;
         this.surface = surface;
-        this.itemTagKey = TagKey.of(Registry.ITEM_KEY, id("%s_supports".formatted(name().toLowerCase())));
-        this.blockTagKey = TagKey.of(Registry.BLOCK_KEY, id("%s_supports".formatted(name().toLowerCase())));
+        this.itemTagKey = TagKey.of(Registry.ITEM_KEY, id("%s_surfaces".formatted(name().toLowerCase())));
+        this.blockTagKey = TagKey.of(Registry.BLOCK_KEY, id("%s_surfaces".formatted(name().toLowerCase())));
         this.containItemTagKey = TagKey.of(Registry.ITEM_KEY, id("%s_shelves".formatted(name().toLowerCase())));
         this.containBlockTagKey = TagKey.of(Registry.BLOCK_KEY, id("%s_shelves".formatted(name().toLowerCase())));
     }
