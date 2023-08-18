@@ -261,6 +261,7 @@ public class ShelfBlock extends Block implements BlockEntityProvider {
         var mainhand = player.getStackInHand(Hand.MAIN_HAND);
         var offhand = player.getStackInHand(Hand.OFF_HAND);
         if (mainhand.getItem() == Items.BUNDLE && shelfStack.getItem() == Items.STICK && offhand.getItem() == Items.ENDER_PEARL) {
+            mainhand.use(player.world, player, Hand.MAIN_HAND);
             mainhand.decrement(1);
             offhand.decrement(1);
             return Optional.of(new Pair<>(SHELVING_WAND_ITEM.getDefaultStack(), new SoundEvent(vid("item.axe.strip"))));
