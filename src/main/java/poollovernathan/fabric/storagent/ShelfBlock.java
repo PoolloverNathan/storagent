@@ -134,14 +134,12 @@ public class ShelfBlock extends Block implements BlockEntityProvider {
     }
 
     protected static VoxelShape getShape(ShelfHeight height) {
-        var legHeight = height.height - 2/16f;
-        var legWidth = 2/16f;
         return combineAll(
-                VoxelShapes.cuboid(0, legHeight, 0, 1, height.height, 1),
-                VoxelShapes.cuboid(0, 0, 0, legWidth, legHeight, legWidth),
-                VoxelShapes.cuboid(0, 0, 1 - legWidth, legWidth, legHeight, 1),
-                VoxelShapes.cuboid(1 - legWidth, 0, 0, 1, legHeight, legWidth),
-                VoxelShapes.cuboid(1 - legWidth, 0, 1 - legWidth, 1, legHeight, 1)
+                VoxelShapes.cuboid(0, height.height - 0.125f, 0, 1, height.height, 1),
+                VoxelShapes.cuboid(0, 0, 0, 0.125f, height.height - 0.125f, 0.125f),
+                VoxelShapes.cuboid(0, 0, 1 - 0.125f, 0.125f, height.height - 0.125f, 1),
+                VoxelShapes.cuboid(1 - 0.125f, 0, 0, 1, height.height - 0.125f, 0.125f),
+                VoxelShapes.cuboid(1 - 0.125f, 0, 1 - 0.125f, 1, height.height - 0.125f, 1)
         );
     }
 
