@@ -18,10 +18,16 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.WritableBookItem;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtString;
+import net.minecraft.server.command.CommandOutput;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.tag.TagKey;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Pair;
@@ -260,6 +266,53 @@ public class ShelfBlock extends Block implements BlockEntityProvider {
             mainhand.decrement(1);
             offhand.decrement(1);
             return Optional.of(new Pair<>(SHELVING_WAND_ITEM.getDefaultStack(), new SoundEvent(vid("item.axe.strip"))));
+        }
+        if (shelfStack.getItem() == Items.COMMAND_BLOCK && mainhand.getItem() == Items.WRITABLE_BOOK && offhand.getItem() == Items.REDSTONE_TORCH && WritableBookItem.isValid(mainhand.getNbt())) {
+            assert mainhand.getNbt() != null;
+            NbtList pages = mainhand.getNbt().getList("pages", NbtElement.STRING_TYPE);
+            var server = player.world.getServer();
+            assert server != null;
+            var source = server.getCommandSource().withEntity(player).withPosition(Vec3d.ofCenter(pos)).withOutput(player);
+            var resultBook = Items.WRITTEN_BOOK.getDefaultStack();
+            var resultPages = new NbtList();
+            var resultNbt = resultBook.getOrCreateNbt();
+            resultNbt.put("pages", resultPages);
+            resultNbt.putString("title", "Execution Results");
+            resultNbt.putString("author", "Command Block");
+            var i = 0;
+            for (var page: pages) {
+                var localI = i++;
+                var command = page.asString();
+                server.getCommandManager().executeWithPrefix(source.withOutput(new CommandOutput() {
+                    final int i = localI;
+                    @Override
+                    public void sendMessage(Text message) {
+                        resultPages.add(NbtString.of(Text.Serializer.toJson(message)));
+                    }
+
+                    @Override
+                    public boolean shouldReceiveFeedback() {
+                        return true;
+                    }
+
+                    @Override
+                    public boolean shouldTrackOutput() {
+                        return true;
+                    }
+
+                    @Override
+                    public boolean shouldBroadcastConsoleToOps() {
+                        return false;
+                    }
+                }), command);
+            }
+
+            return Optional.of(new Pair<>(resultBook, new SoundEvent(vid("block.amethyst_block.step"))));
+        }
+        if (shelfStack.getItem() == Items.ORANGE_GLAZED_TERRACOTTA && mainhand.getItem() == Items.HEAVY_WEIGHTED_PRESSURE_PLATE && offhand.getItem() == Items.REDSTONE) {
+            mainhand.decrement(1);
+            offhand.decrement(1);
+            return Optional.of(new Pair<>(Items.COMMAND_BLOCK.getDefaultStack(), new SoundEvent(vid("block.enchantment_table.use"))));
         }
         return Optional.empty();
     }
