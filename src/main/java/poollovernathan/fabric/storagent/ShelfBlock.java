@@ -283,30 +283,8 @@ public class ShelfBlock extends Block implements BlockEntityProvider {
             for (var page: pages) {
                 var localI = i++;
                 var command = page.asString();
-                server.getCommandManager().executeWithPrefix(source.withOutput(new CommandOutput() {
-                    final int i = localI;
-                    @Override
-                    public void sendMessage(Text message) {
-                        resultPages.add(NbtString.of(Text.Serializer.toJson(message)));
-                    }
-
-                    @Override
-                    public boolean shouldReceiveFeedback() {
-                        return true;
-                    }
-
-                    @Override
-                    public boolean shouldTrackOutput() {
-                        return true;
-                    }
-
-                    @Override
-                    public boolean shouldBroadcastConsoleToOps() {
-                        return false;
-                    }
-                }), command);
+                server.getCommandManager().executeWithPrefix(new FunctionalCommandOutput(message -> resultPages.add(NbtString.of(Text.Serializer.toJson(message))), true, true, false).applyTo(source), command);
             }
-
             return Optional.of(new Pair<>(resultBook, new SoundEvent(vid("block.amethyst_block.step"))));
         }
         if (shelfStack.getItem() == Items.ORANGE_GLAZED_TERRACOTTA && mainhand.getItem() == Items.HEAVY_WEIGHTED_PRESSURE_PLATE && offhand.getItem() == Items.REDSTONE) {
