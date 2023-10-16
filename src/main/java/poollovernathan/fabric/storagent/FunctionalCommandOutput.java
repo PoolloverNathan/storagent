@@ -1,19 +1,19 @@
 package poollovernathan.fabric.storagent;
 
-import net.minecraft.command.CommandSource;
 import net.minecraft.server.command.CommandOutput;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class FunctionalCommandOutput implements CommandOutput {
     protected final Consumer<Text> consumer;
-    protected final Producer<Boolean> shouldReceiveFeedback;
-    protected final Producer<Boolean> shouldTrackOutput;
-    protected final Producer<Boolean> shouldBroadcastConsoleToOps;
+    protected final Supplier<Boolean> shouldReceiveFeedback;
+    protected final Supplier<Boolean> shouldTrackOutput;
+    protected final Supplier<Boolean> shouldBroadcastConsoleToOps;
 
-    public FunctionalCommandOutput(Consumer<Text> consumer, Producer<Boolean> shouldReceiveFeedback, Producer<Boolean> shouldTrackOutput, Producer<Boolean> shouldBroadcastConsoleToOps) {
+    public FunctionalCommandOutput(Consumer<Text> consumer, Supplier<Boolean> shouldReceiveFeedback, Supplier<Boolean> shouldTrackOutput, Supplier<Boolean> shouldBroadcastConsoleToOps) {
         this.consumer = consumer;
         this.shouldReceiveFeedback = shouldReceiveFeedback;
         this.shouldTrackOutput = shouldTrackOutput;

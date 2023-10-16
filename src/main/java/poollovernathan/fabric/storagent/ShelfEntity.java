@@ -1,12 +1,9 @@
 package poollovernathan.fabric.storagent;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.Packet;
 import net.minecraft.network.listener.ClientPlayPacketListener;
@@ -17,9 +14,11 @@ import net.minecraft.util.math.Direction;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 import static poollovernathan.fabric.storagent.ExampleMod.SHELF_BLOCK_ENTITY;
+import static poollovernathan.fabric.storagent.ExampleMod.pick;
 
 public class ShelfEntity extends BlockEntity implements ImplementedInventory, CappedInventory {
     protected final DefaultedList<ItemStack> items = DefaultedList.ofSize(16, ItemStack.EMPTY);
@@ -59,8 +58,10 @@ public class ShelfEntity extends BlockEntity implements ImplementedInventory, Ca
     @Override
     public void markDirty() {
         super.markDirty();
-        var state = world.getBlockState(pos);
-        world.updateListeners(pos, state, state, 0);
+        if (world != null) {
+            var state = world.getBlockState(pos);
+            world.updateListeners(pos, state, state, 0);
+        }
     }
 
     @Override
@@ -70,17 +71,22 @@ public class ShelfEntity extends BlockEntity implements ImplementedInventory, Ca
 
     @Override
     public int[] getAvailableSlots(Direction side) {
-        var candidates = new ArrayList<Integer>(16);
+        var emptySlots = new ArrayList<Integer>(16);
+        var filledSlots = new ArrayList<Integer>(16);
         for (var i = 0; i < size(); i++) {
-            if (getStack(i).isEmpty()) {
-                candidates.add(i);
-            }
+            (getStack(i).isEmpty() ? emptySlots : filledSlots).add(i);
         }
-        return switch (candidates.size()) {
-            case 0 -> new int[0];
-            case 1 -> new int[] { candidates.get(0) };
-            default -> new int[] { candidates.get(world.random.nextInt(candidates.size())) };
-        };
+
+        assert world != null;
+        var source = new Pair<>(
+            pick(emptySlots, world.random),
+            pick(filledSlots, world.random)
+        );
+
+        return Stream.of(source.left(), source.right())
+                .filter(Objects::nonNull)
+                .mapToInt(Integer::intValue)
+                .toArray();
     }
 
     @Override
